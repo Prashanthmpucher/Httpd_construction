@@ -1,0 +1,35 @@
+pipeline {
+    agent { label 'slave1'}
+    
+    triggers{
+        pollSCM('* * * * *')
+    
+    }
+
+    stages {
+        stage('Clone') {
+            steps {
+                echo 'Clone theproject'
+                git branch: 'main', url: 'https://github.com/Prashanthmpucher/Httpd_construction.git'
+            }
+        }
+         stage('Copying2') {
+            steps {
+                echo 'Verify the project whether it is cloned'
+                sh 'pwd'
+                sh 'ls'
+            }
+        }
+         stage('Deploy to httpd') {
+            steps {
+                echo 'Copying the files'
+                sh 'scp -i /home/ec2-user/key.pem -r /var/jenkins/workspace/httpd_construction/* ec2-user@15.206.72.50:/var/www/html'
+            }
+        }
+        stage('Stage4') {
+            steps {
+                echo 'Check the deploy'
+            }
+        }
+    }
+}
